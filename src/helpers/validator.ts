@@ -1,14 +1,16 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
+import CreateMemberDto from 'src/dto/members/create-member.dto';
 import CreateMothershipDto from 'src/dto/motherships/create-mothership.dto';
 import CreateShipDto from 'src/dto/ships/create-ship.dto';
-import mothershipEntity from 'src/entities/motherships/mothership.entity';
-import shipEntity from 'src/entities/ships/ship.entity';
+import Member from 'src/entities/members/member.entity';
+import Mothership from 'src/entities/motherships/mothership.entity';
+import Ship from 'src/entities/ships/ship.entity';
 import { Repository } from 'typeorm';
 
 export default class ResourceValidator {
   static async checkIfResourceExist(
-    resource: CreateMothershipDto | CreateShipDto,
-    repository: Repository<shipEntity> | Repository<mothershipEntity>,
+    resource: CreateMothershipDto | CreateShipDto | CreateMemberDto,
+    repository: Repository<Ship> | Repository<Mothership> | Repository<Member>,
     resourceType: string,
   ) {
     const checkIfResourceExists: boolean =
@@ -20,22 +22,26 @@ export default class ResourceValidator {
   }
 
   static async validateResourceId(
-    resource: CreateShipDto,
-    repository: Repository<shipEntity> | Repository<mothershipEntity>,
+    resource,
+    repository: Repository<Ship> | Repository<Mothership>,
     resourceType: string,
   ) {
-     if (resourceType === 'Ship') {
-        const checkMothershipId: boolean =
-      (await repository.find({ where: { id: resource.mothershipId!}})).length >= 1 ? true : false;
+    if (resourceType === 'Ship') {
+      const checkMothershipId: boolean =
+        (await repository.find({ where: { id: resource.mothershipId! } })).length >= 1 ? true : false;
 
       if (!checkMothershipId) {
         throw new NotFoundException(`No Mothership with the ID of '${resource.mothershipId}'`);
       }
+    }
 
-     }
+    if (resourceType === 'Crew') {
+      const checkShipId: boolean =
+        (await repository.find({ where: { id: resource.shipId } })).length >= 1 ? true : false;
 
-     if (resourceType === 'Crew') {
-        
-     }
+      if (!checkShipId) {
+        throw new NotFoundException(`No Ship with the ID of '${resource.shipId}'`);
+      }
+    }
   }
 }

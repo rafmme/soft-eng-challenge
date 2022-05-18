@@ -1,11 +1,24 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import Member from 'src/entities/members/member.entity';
+import Ship from 'src/entities/ships/ship.entity';
+import ResourceValidator from 'src/helpers/validator';
+import { Repository } from 'typeorm';
 import CreateMemberDto from '../../dto/members/create-member.dto';
 import UpdateMemberDto from '../../dto/members/update-member.dto';
 
 @Injectable()
 export default class MembersService {
-  create(createMemberDto: CreateMemberDto) {
-    return 'This action adds a new member';
+  constructor(
+    @InjectRepository(Member) private readonly memberRepository: Repository<Member>,
+    @InjectRepository(Ship) private readonly shipRepository: Repository<Ship>,
+  ) {}
+
+  async create(createMemberDto: CreateMemberDto) {
+    const crew: Member = this.memberRepository.create(createMemberDto);
+    await ResourceValidator.validateResourceId(createMemberDto, this.shipRepository, 'Crew');
+    await ResourceValidator.checkIfResourceExist(createMemberDto, this.memberRepository, 'Crew Member');
+    return this.memberRepository.save(crew);
   }
 
   findAll() {
