@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import MothershipsService from '../../services/motherships/motherships.service';
-import CreateMothershipDto from '../../dto/motherships/create-mothership.dto';
-import UpdateMothershipDto from '../../dto/motherships/update-mothership.dto';
+import MothershipsService from '../../../services/motherships/motherships.service';
+import CreateMothershipDto from '../../../dto/motherships/create-mothership.dto';
+import UpdateMothershipDto from '../../../dto/motherships/update-mothership.dto';
 
 @Controller('motherships')
 export default class MothershipsController {

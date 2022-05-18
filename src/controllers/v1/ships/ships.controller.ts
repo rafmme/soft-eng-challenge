@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import ShipsService from '../../services/ships/ships.service';
-import CreateShipDto from '../../dto/ships/create-ship.dto';
-import UpdateShipDto from '../../dto/ships/update-ship.dto';
+import ShipsService from '../../../services/ships/ships.service';
+import CreateShipDto from '../../../dto/ships/create-ship.dto';
+import UpdateShipDto from '../../../dto/ships/update-ship.dto';
 
 @Controller('ships')
 export default class ShipsController {
