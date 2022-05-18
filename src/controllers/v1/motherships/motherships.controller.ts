@@ -3,7 +3,7 @@ import MothershipsService from '../../../services/motherships/motherships.servic
 import CreateMothershipDto from '../../../dto/motherships/create-mothership.dto';
 import UpdateMothershipDto from '../../../dto/motherships/update-mothership.dto';
 
-@Controller('motherships')
+@Controller('v1/motherships')
 export default class MothershipsController {
   constructor(private readonly mothershipsService: MothershipsService) {}
 

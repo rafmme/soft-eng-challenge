@@ -1,12 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Column, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import Ship from '../ships/ship.entity';
 
+@Entity()
 export default class Mothership {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ApiProperty()
   @Column({ unique: true })
   name: string;
 
