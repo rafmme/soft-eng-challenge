@@ -3,7 +3,7 @@ import ShipsService from '../../../services/ships/ships.service';
 import CreateShipDto from '../../../dto/ships/create-ship.dto';
 import UpdateShipDto from '../../../dto/ships/update-ship.dto';
 
-@Controller('ships')
+@Controller('v1/ships')
 export default class ShipsController {
   constructor(private readonly shipsService: ShipsService) {}
 

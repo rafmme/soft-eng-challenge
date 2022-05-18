@@ -1,6 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Mothership from 'src/entities/motherships/mothership.entity';
+import ResourceValidator from 'src/helpers/validator';
 import { Repository } from 'typeorm';
 import CreateMothershipDto from '../../dto/motherships/create-mothership.dto';
 import UpdateMothershipDto from '../../dto/motherships/update-mothership.dto';
@@ -11,13 +12,7 @@ export default class MothershipsService {
 
   async create(createMothershipDto: CreateMothershipDto) {
     const mothership: Mothership = this.mothershipRepository.create(createMothershipDto);
-    const checkIfMothershipAlreadyExists: boolean =
-      (await this.mothershipRepository.find({ where: { name: mothership.name } })).length >= 1 ? true : false;
-
-    if (checkIfMothershipAlreadyExists) {
-      throw new ConflictException(`Mothership with name of '${mothership.name}' already exist!`);
-    }
-
+    await ResourceValidator.checkIfResourceExist(createMothershipDto, this.mothershipRepository, 'Mothership');
     return this.mothershipRepository.save(mothership);
   }
 
