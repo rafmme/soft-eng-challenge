@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Member from 'src/entities/members/member.entity';
 import Ship from 'src/entities/ships/ship.entity';
+import Util from 'src/helpers';
 import ResourceValidator from 'src/helpers/validator';
 import { Repository } from 'typeorm';
 import CreateMemberDto from '../../dto/members/create-member.dto';
@@ -18,7 +19,8 @@ export default class MembersService {
     const crew: Member = this.memberRepository.create(createMemberDto);
     await ResourceValidator.validateResourceId(createMemberDto, this.shipRepository, 'Crew');
     await ResourceValidator.checkIfResourceExist(createMemberDto, this.memberRepository, 'Crew Member');
-    return this.memberRepository.save(crew);
+    const crewMember = await this.memberRepository.save(crew);
+    return Util.formatJSONResponse('New Crew Member added!', 201, crewMember, 'crewMember');
   }
 
   findAll() {

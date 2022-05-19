@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Mothership from 'src/entities/motherships/mothership.entity';
 import Ship from 'src/entities/ships/ship.entity';
+import Util from 'src/helpers';
 import ResourceValidator from 'src/helpers/validator';
 import { Repository } from 'typeorm';
 import CreateShipDto from '../../dto/ships/create-ship.dto';
@@ -18,7 +19,8 @@ export default class ShipsService {
     const ship: Ship = this.shipRepository.create(createShipDto);
     await ResourceValidator.validateResourceId(createShipDto, this.mothershipRepository, 'Ship');
     await ResourceValidator.checkIfResourceExist(createShipDto, this.shipRepository, 'Ship');
-    return this.shipRepository.save(ship);
+    const newShip = await this.shipRepository.save(ship);
+    return Util.formatJSONResponse('New Ship created!', 201, newShip, 'ship');
   }
 
   findAll() {

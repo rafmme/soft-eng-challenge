@@ -9,4 +9,14 @@ export default class Util {
 
     return uuid;
   }
+
+  static formatJSONResponse(message: string, status: number, data, key: string) {
+    const response = {
+      statusCode: status,
+      message,
+      [key]: data,
+    };
+
+    return response;
+  }
 }
