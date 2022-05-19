@@ -19,7 +19,7 @@ export default class MembersController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.membersService.findOne(+id);
+    return this.membersService.findOne(id);
   }
 
   @Patch(':id')
@@ -29,6 +29,6 @@ export default class MembersController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.membersService.remove(+id);
+    return this.membersService.remove(id);
   }
 }

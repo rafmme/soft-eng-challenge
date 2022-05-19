@@ -23,19 +23,24 @@ export default class MembersService {
     return Util.formatJSONResponse('New Crew Member added!', 201, crewMember, 'crewMember');
   }
 
-  findAll() {
-    return `This action returns all members`;
+  async findAll() {
+    const crewMembers = await this.memberRepository.find({ relations: { ship: true } });
+    return Util.formatJSONResponse('All available Crew Members', 200, crewMembers, 'crewMembers');
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} member`;
+  async findOne(id: string) {
+    await ResourceValidator.validateResourceId({ id }, this.memberRepository, null);
+    const crewMember = await this.memberRepository.find({ where: { id } });
+    return Util.formatJSONResponse('Crew Member was found.', 200, crewMember, 'crewMember');
   }
 
   update(id: number, updateMemberDto: UpdateMemberDto) {
     return `This action updates a #${id} member`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} member`;
+  async remove(id: string) {
+    await ResourceValidator.validateResourceId({ id }, this.memberRepository, null);
+    const crewMember = await this.memberRepository.delete({ id });
+    return Util.formatJSONResponse('Crew Member deletion was successful.', 200, crewMember, 'crewMember');
   }
 }

@@ -23,8 +23,8 @@ export default class ResourceValidator {
 
   static async validateResourceId(
     resource,
-    repository: Repository<Ship> | Repository<Mothership>,
-    resourceType: string,
+    repository: Repository<Ship> | Repository<Mothership> | Repository<Member>,
+    resourceType: string | null,
   ) {
     if (resourceType === 'Ship') {
       const checkMothershipId: boolean =
@@ -41,6 +41,15 @@ export default class ResourceValidator {
 
       if (!checkShipId) {
         throw new NotFoundException(`No Ship with the ID of '${resource.shipId}'`);
+      }
+    }
+
+    if (!resourceType) {
+      const checkCrewMemberId: boolean =
+        (await repository.find({ where: { id: resource.id } })).length >= 1 ? true : false;
+
+      if (!checkCrewMemberId) {
+        throw new NotFoundException(`No Crew Member with the ID of '${resource.id}'`);
       }
     }
   }
