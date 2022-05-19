@@ -5,5 +5,5 @@ export default class CreateMothershipDto {
   @ApiProperty({ example: 'MS Carl Vincent' })
   @IsString()
   @IsNotEmpty()
-  name: string;
+    name: string;
 }

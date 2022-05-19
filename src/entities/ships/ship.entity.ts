@@ -14,25 +14,21 @@ import Mothership from '../motherships/mothership.entity';
 @Entity()
 export default class Ship {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+    id: string;
 
   @ApiProperty()
   @Column({ unique: true })
-  name: string;
-
-  @ApiProperty()
-  @Column({ name: 'mothership_id' })
-  mothershipId: string;
+    name: string;
 
   @UpdateDateColumn({ name: 'updated_at', type: 'time', default: () => 'CURRENT_TIMESTAMP' })
-  updatedAt: Date;
+    updatedAt: Date;
 
   @CreateDateColumn({ name: 'created_at', type: 'time', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
+    createdAt: Date;
 
-  @ManyToOne(() => Mothership, (mothership) => mothership.ships)
-  mothership: Mothership;
+  @ManyToOne(() => Mothership, (mothership) => mothership.ships, { onUpdate: 'CASCADE', onDelete: 'CASCADE' })
+    mothership: Mothership;
 
   @OneToMany(() => Member, (member: Member) => member.ship)
-  members: Member[];
+    members: Member[];
 }

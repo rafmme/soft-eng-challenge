@@ -1,9 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller, Get, Post, Body, Patch, Param, Delete,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import MothershipsService from '../../../services/motherships/motherships.service';
 import CreateMothershipDto from '../../../dto/motherships/create-mothership.dto';
 import UpdateMothershipDto from '../../../dto/motherships/update-mothership.dto';
 
 @Controller('v1/motherships')
+@ApiTags('motherships')
 export default class MothershipsController {
   constructor(private readonly mothershipsService: MothershipsService) {}
 

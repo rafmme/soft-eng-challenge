@@ -1,9 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller, Get, Post, Body, Patch, Param, Delete,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import MembersService from '../../../services/members/members.service';
 import CreateMemberDto from '../../../dto/members/create-member.dto';
 import UpdateMemberDto from '../../../dto/members/update-member.dto';
 
 @Controller('v1/members')
+@ApiTags('crew members')
 export default class MembersController {
   constructor(private readonly membersService: MembersService) {}
 

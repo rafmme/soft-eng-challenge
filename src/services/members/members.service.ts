@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import Member from 'src/entities/members/member.entity';
 import Ship from 'src/entities/ships/ship.entity';
 import Util from 'src/helpers';
 import ResourceValidator from 'src/helpers/validator';
-import { Repository } from 'typeorm';
 import CreateMemberDto from '../../dto/members/create-member.dto';
 import UpdateMemberDto from '../../dto/members/update-member.dto';
 
@@ -17,8 +17,16 @@ export default class MembersService {
 
   async create(createMemberDto: CreateMemberDto) {
     const crew: Member = this.memberRepository.create(createMemberDto);
+    crew.ship = await this.shipRepository.findOne({
+      where: {
+        id: createMemberDto.shipId,
+      },
+    });
+
+    await ResourceValidator.isFull(this.memberRepository, createMemberDto.shipId, 'sh');
     await ResourceValidator.validateResourceId(createMemberDto, this.shipRepository, 'Crew');
     await ResourceValidator.checkIfResourceExist(createMemberDto, this.memberRepository, 'Crew Member');
+
     const crewMember = await this.memberRepository.save(crew);
     return Util.formatJSONResponse('New Crew Member added!', 201, crewMember, 'crewMember');
   }
@@ -30,7 +38,10 @@ export default class MembersService {
 
   async findOne(id: string) {
     await ResourceValidator.validateResourceId({ id }, this.memberRepository, null);
-    const crewMember = await this.memberRepository.find({ where: { id } });
+    const crewMember = await this.memberRepository.find({
+      where: { id },
+      relations: { ship: true },
+    });
     return Util.formatJSONResponse('Crew Member was found.', 200, crewMember, 'crewMember');
   }
 

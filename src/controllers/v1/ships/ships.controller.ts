@@ -1,9 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller, Get, Post, Body, Patch, Param, Delete,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import ShipsService from '../../../services/ships/ships.service';
 import CreateShipDto from '../../../dto/ships/create-ship.dto';
 import UpdateShipDto from '../../../dto/ships/update-ship.dto';
 
 @Controller('v1/ships')
+@ApiTags('ships')
 export default class ShipsController {
   constructor(private readonly shipsService: ShipsService) {}
 
