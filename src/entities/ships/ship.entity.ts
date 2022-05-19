@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import Member from '../members/member.entity';
 import Mothership from '../motherships/mothership.entity';
 
@@ -12,9 +20,19 @@ export default class Ship {
   @Column({ unique: true })
   name: string;
 
+  @ApiProperty()
+  @Column({ name: 'mothership_id' })
+  mothershipId: string;
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'time', default: () => 'CURRENT_TIMESTAMP' })
+  updatedAt: Date;
+
+  @CreateDateColumn({ name: 'created_at', type: 'time', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
+
   @ManyToOne(() => Mothership, (mothership) => mothership.ships)
   mothership: Mothership;
 
-  @OneToMany(() => Member, (member) => member.ship)
+  @OneToMany(() => Member, (member: Member) => member.ship)
   members: Member[];
 }

@@ -9,6 +9,12 @@ export default class Mothership {
   @Column({ unique: true })
   name: string;
 
+  @UpdateDateColumn({ name: 'updated_at', type: 'time', default: () => 'CURRENT_TIMESTAMP' })
+  updatedAt: Date;
+
+  @CreateDateColumn({ name: 'created_at', type: 'time', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
+
   @OneToMany(() => Ship, (ship) => ship.mothership)
   ships: Ship[];
 }

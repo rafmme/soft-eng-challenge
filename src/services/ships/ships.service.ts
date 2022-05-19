@@ -23,19 +23,24 @@ export default class ShipsService {
     return Util.formatJSONResponse('New Ship created!', 201, newShip, 'ship');
   }
 
-  findAll() {
-    return `This action returns all ships`;
+  async findAll() {
+    const ships = await this.shipRepository.find({ relations: { mothership: true, members: true } });
+    return Util.formatJSONResponse('All available Ships', 200, ships, 'ships');
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} ship`;
+  async findOne(id: string) {
+    await ResourceValidator.validateResourceId({ shipId: id }, this.shipRepository, 'Crew');
+    const ship = await this.shipRepository.find({ where: { id } });
+    return Util.formatJSONResponse('Ship was found.', 200, ship, 'ship');
   }
 
   update(id: number, updateShipDto: UpdateShipDto) {
     return `This action updates a #${id} ship`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} ship`;
+  async remove(id: string) {
+    await ResourceValidator.validateResourceId({ shipId: id }, this.shipRepository, 'Crew');
+    const ship = await this.shipRepository.delete({ id });
+    return Util.formatJSONResponse('Ship deletion was successful.', 200, ship, 'ship');
   }
 }
