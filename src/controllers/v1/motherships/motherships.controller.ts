@@ -19,7 +19,7 @@ export default class MothershipsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.mothershipsService.findOne(+id);
+    return this.mothershipsService.findOne(id);
   }
 
   @Patch(':id')
@@ -29,6 +29,6 @@ export default class MothershipsController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.mothershipsService.remove(+id);
+    return this.mothershipsService.remove(id);
   }
 }

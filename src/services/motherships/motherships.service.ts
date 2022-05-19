@@ -18,19 +18,24 @@ export default class MothershipsService {
     return Util.formatJSONResponse('New Mothership created!', 201, motherShip, 'mothership');
   }
 
-  findAll() {
-    return `This action returns all motherships`;
+  async findAll() {
+    const motherships = await this.mothershipRepository.find({ relations: ['ships'] });
+    return Util.formatJSONResponse('All available Motherships', 200, motherships, 'motherships');
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} mothership`;
+  async findOne(id: string) {
+    await ResourceValidator.validateResourceId({ mothershipId: id }, this.mothershipRepository, 'Ship');
+    const mothership = await this.mothershipRepository.find({ where: { id } });
+    return Util.formatJSONResponse('Mothership was found.', 200, mothership, 'mothership');
   }
 
   update(id: number, updateMothershipDto: UpdateMothershipDto) {
     return `This action updates a #${id} mothership`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} mothership`;
+  async remove(id: string) {
+    await ResourceValidator.validateResourceId({ mothershipId: id }, this.mothershipRepository, 'Ship');
+    const mothership = await this.mothershipRepository.delete({ id });
+    return Util.formatJSONResponse('Ship deletion was successful.', 200, mothership, 'mothership');
   }
 }
