@@ -26,9 +26,9 @@ export default class MembersController {
     return this.membersService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMemberDto: UpdateMemberDto) {
-    return this.membersService.update(+id, updateMemberDto);
+  @Patch(':name')
+  update(@Param('name') name: string, @Body() updateMemberDto: UpdateMemberDto) {
+    return this.membersService.update(name, updateMemberDto);
   }
 
   @Delete(':id')

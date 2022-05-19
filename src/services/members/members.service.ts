@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import Member from 'src/entities/members/member.entity';
@@ -45,8 +45,41 @@ export default class MembersService {
     return Util.formatJSONResponse('Crew Member was found.', 200, crewMember, 'crewMember');
   }
 
-  update(id: number, updateMemberDto: UpdateMemberDto) {
-    return `This action updates a #${id} member`;
+  async update(name: string, updateMemberDto: UpdateMemberDto) {
+    const crewMember = await this.memberRepository.findAndCount({
+      where: {
+        name,
+      },
+      relations: { ship: true },
+    });
+
+    if (name !== updateMemberDto.name || crewMember[1] < 1) {
+      throw new BadRequestException(`Sorry, no ship with name of ${name}`);
+    }
+
+    await ResourceValidator.validateResourceId(
+      {
+        shipId: updateMemberDto.from_ship,
+      },
+      this.shipRepository,
+      'Crew',
+    );
+
+    await ResourceValidator.validateResourceId(
+      {
+        shipId: updateMemberDto.to_ship,
+      },
+      this.shipRepository,
+      'Crew',
+    );
+
+    await ResourceValidator.isFull(this.memberRepository, updateMemberDto.to_ship, 'sh');
+
+    const crew: Member = this.memberRepository.create(crewMember[0][0]);
+    crew.ship.id = updateMemberDto.to_ship;
+
+    const updatedCrewMember = await this.memberRepository.update({ name }, crew);
+    return Util.formatJSONResponse('Crew Member was successfully switched.', 200, updatedCrewMember, 'crewMember');
   }
 
   async remove(id: string) {
