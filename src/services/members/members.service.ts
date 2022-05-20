@@ -16,14 +16,15 @@ export default class MembersService {
   ) {}
 
   async create(createMemberDto: CreateMemberDto) {
-    await ResourceValidator.isFull(this.memberRepository, createMemberDto.shipId, 'sh');
+    const { shipId } = createMemberDto;
+    await ResourceValidator.isFull(this.memberRepository, shipId, 'sh');
     await ResourceValidator.validateResourceId(createMemberDto, this.shipRepository, 'Crew');
     await ResourceValidator.checkIfResourceExist(createMemberDto, this.memberRepository, 'Crew Member');
 
     const crew: Member = this.memberRepository.create(createMemberDto);
     crew.ship = await this.shipRepository.findOne({
       where: {
-        id: createMemberDto.shipId,
+        id: shipId,
       },
     });
 
@@ -46,6 +47,11 @@ export default class MembersService {
   }
 
   async update(name: string, updateMemberDto: UpdateMemberDto) {
+    const {
+      name: memberName,
+      from_ship: fromShip,
+      to_ship: toShip,
+    } = updateMemberDto;
     const crewMember = await this.memberRepository.findAndCount({
       where: {
         name,
@@ -53,13 +59,13 @@ export default class MembersService {
       relations: { ship: true },
     });
 
-    if (name !== updateMemberDto.name || crewMember[1] < 1) {
+    if (name !== memberName || crewMember[1] < 1) {
       throw new BadRequestException(`Sorry, no ship with name of ${name}`);
     }
 
     await ResourceValidator.validateResourceId(
       {
-        shipId: updateMemberDto.from_ship,
+        shipId: fromShip,
       },
       this.shipRepository,
       'Crew',
@@ -67,16 +73,16 @@ export default class MembersService {
 
     await ResourceValidator.validateResourceId(
       {
-        shipId: updateMemberDto.to_ship,
+        shipId: toShip,
       },
       this.shipRepository,
       'Crew',
     );
 
-    await ResourceValidator.isFull(this.memberRepository, updateMemberDto.to_ship, 'sh');
+    await ResourceValidator.isFull(this.memberRepository, toShip, 'sh');
 
     const crew: Member = this.memberRepository.create(crewMember[0][0]);
-    crew.ship.id = updateMemberDto.to_ship;
+    crew.ship.id = toShip;
 
     const updatedCrewMember = await this.memberRepository.update({ name }, crew);
     return Util.formatJSONResponse('Crew Member was successfully switched.', 200, updatedCrewMember, 'crewMember');

@@ -9,8 +9,8 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   const config = new DocumentBuilder()
-    .setTitle('Alien Fight Force')
-    .setDescription('API to help defend Humans from the incoming Alien Invasion.')
+    .setTitle('Alien Fight Force (A.F.F)')
+    .setDescription('They have been always here, but we have never seen them. This API will help defend Humans from the incoming Alien Invasion. The API has three entities: Mothership {ship capacity: 9}; Ship {crew member capacity: 5}; CrewMember')
     .setVersion('1.0')
     .build();
 

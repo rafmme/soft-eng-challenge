@@ -4,47 +4,60 @@ import {
 import { Repository } from 'typeorm';
 import CreateMemberDto from 'src/dto/members/create-member.dto';
 import CreateMothershipDto from 'src/dto/motherships/create-mothership.dto';
-import CreateShipDto from 'src/dto/ships/create-ship.dto';
 import Member from 'src/entities/members/member.entity';
 import Mothership from 'src/entities/motherships/mothership.entity';
 import Ship from 'src/entities/ships/ship.entity';
 import Util from '.';
 
 export default class ResourceValidator {
+  /**
+   * @description A function that checks if an entity with same name already exists
+   * @param {CreateMothershipDto | CreateMemberDto} resource DTO for an entity
+   * @param {Repository<Ship> | Repository<Mothership> | Repository<Member>} repository
+   * @param {string} resourceType - entity name
+   */
   static async checkIfResourceExist(
     resource: CreateMothershipDto | CreateMemberDto,
     repository: Repository<Ship> | Repository<Mothership> | Repository<Member>,
     resourceType: string,
   ) {
+    const { name } = resource;
     const checkIfResourceExists: boolean = (
       await repository.find({
         where: {
-          name: resource.name,
+          name,
         },
       })
     ).length >= 1;
 
     if (checkIfResourceExists) {
-      throw new ConflictException(`${resourceType} with name of '${resource.name}' already exist!`);
+      throw new ConflictException(`${resourceType} with name of '${name}' already exist!`);
     }
   }
 
+  /**
+   * @description A function that checks if an entity with a given id exist
+   * @param {CreateMothershipDto | CreateMemberDto} resource DTO for an entity
+   * @param {Repository<Ship> | Repository<Mothership> | Repository<Member>} repository
+   * @param {string | null} resourceType - entity name
+   */
   static async validateResourceId(
     resource,
     repository: Repository<Ship> | Repository<Mothership> | Repository<Member>,
     resourceType: string | null,
   ) {
+    const { mothershipId, shipId, id } = resource;
     if (resourceType === 'Ship') {
       const checkMothershipId: boolean = (
         await repository.find({
           where: {
-            id: resource.mothershipId!,
+            id: mothershipId,
           },
         })
       ).length >= 1;
 
       if (!checkMothershipId) {
-        throw new NotFoundException(`No Mothership with the ID of '${resource.mothershipId}'`);
+        throw new NotFoundException(`No Mothership with the ID of '${mothershipId}'`);
       }
     }
 
@@ -52,29 +65,36 @@ export default class ResourceValidator {
       const checkShipId: boolean = (
         await repository.find({
           where: {
-            id: resource.shipId,
+            id: shipId,
           },
         })
       ).length >= 1;
 
       if (!checkShipId) {
-        throw new NotFoundException(`No Ship with the ID of '${resource.shipId}'`);
+        throw new NotFoundException(`No Ship with the ID of '${shipId}'`);
       }
     }
 
     if (!resourceType) {
       const checkCrewMemberId: boolean = (
         await repository.find({
-          where: { id: resource.id },
+          where: { id },
         })
       ).length >= 1;
 
       if (!checkCrewMemberId) {
-        throw new NotFoundException(`No Crew Member with the ID of '${resource.id}'`);
+        throw new NotFoundException(`No Crew Member with the ID of '${id}'`);
       }
     }
   }
 
+  /**
+   * @description A function that checks if a ships/mothership has reached its max limit
+   * @param {Repository<Ship> | Repository<Mothership>} repository
+   * @param {string} id - entity id
+   * @param {string} type - entity type
+   * @param {number?} count - number of entity to be added
+   */
   static async isFull(repository, id: string, type: string, count?: number) {
     if (type === 'ms') {
       const shipCount = Util.shipCount(

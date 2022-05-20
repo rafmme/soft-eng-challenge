@@ -2,7 +2,11 @@ import Member from 'src/entities/members/member.entity';
 import Ship from 'src/entities/ships/ship.entity';
 
 export default class Util {
-  static generateUUID() {
+  /**
+   * @description A function that generates a UUID string
+   * @returns {string} uuid
+   */
+  static generateUUID(): string {
     let date = new Date().getTime();
     const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (text) => {
       const randomNumber = (date + Math.random() * 16) % 16 || 0;
@@ -13,6 +17,14 @@ export default class Util {
     return uuid;
   }
 
+  /**
+   * @description A function that formats the JSON object gotten from the controllers' results
+   * @param {string} message - text
+   * @param {number} status - HTTP status code
+   * @param {object} data - request response
+   * @param {object} key
+   * @returns {object} formatted response
+   */
   static formatJSONResponse(message: string, status: number, data, key: string) {
     const response = {
       statusCode: status,
@@ -23,11 +35,18 @@ export default class Util {
     return response;
   }
 
-  static shipCount(list: Ship[], param: string) {
+  /**
+   * @description A function that counts the number of ships in a mothership
+   * @param {Ship[]} list- list of all Ship entities
+   * @param {string} param - id (UUID) to use
+   * @returns {number} number of ships
+   */
+  static shipCount(list: Ship[], param: string): number {
     let shipCount = 0;
 
     list.forEach((ship) => {
-      if (ship.mothership.id === param) {
+      const { mothership: { id } } = ship;
+      if (id === param) {
         shipCount += 1;
       }
     });
@@ -35,11 +54,18 @@ export default class Util {
     return shipCount;
   }
 
-  static crewCount(list: Member[], param: string) {
+  /**
+   * @description A function that counts the number of crew members in a ship
+   * @param {Member[]} list- list of all crew members entities
+   * @param {string} param - id (UUID) to use
+   * @returns {number} number of crew members
+   */
+  static crewCount(list: Member[], param: string): number {
     let crewCount = 0;
 
     list.forEach((member) => {
-      if (member.ship.id === param) {
+      const { ship: { id } } = member;
+      if (id === param) {
         crewCount += 1;
       }
     });
@@ -47,15 +73,27 @@ export default class Util {
     return crewCount;
   }
 
+  /**
+   * @description A function that generates a name for an entity
+   * @param {string} type - type of entity
+   * @param {string} parentResourceName - name of entity's parent
+   * @param {string} parentResourceId - id of entity's parent
+   * @returns {string} random unique generated name
+   */
   static generateResourceName(
     type:string,
     parentResourceName: string,
     parentResourceId: string,
-  ) {
-    const resourceName = `${parentResourceName.slice(0, 4)}-${parentResourceId.slice(0, 8)}-${type}-${this.generateUUID().slice(0, 8)}`;
+  ): string {
+    const resourceName = `${parentResourceName.slice(0, 4)}-${parentResourceId.slice(0, 8)}-${type}-${Util.generateUUID().slice(0, 8)}`;
     return resourceName.replace(' ', '').toUpperCase();
   }
 
+  /**
+   * @description A function that generates and fills an array
+   * @param {number} length - length of array to create
+   * @returns {number[]} random unique generated name
+   */
   static createArray(length: number): number[] {
     const dummyArray = new Array(length).fill((0));
     return dummyArray;

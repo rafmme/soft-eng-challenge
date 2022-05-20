@@ -5,7 +5,6 @@ import Mothership from 'src/entities/motherships/mothership.entity';
 import Util from 'src/helpers';
 import ResourceValidator from 'src/helpers/validator';
 import CreateMothershipDto from '../../dto/motherships/create-mothership.dto';
-import UpdateMothershipDto from '../../dto/motherships/update-mothership.dto';
 import ShipsService from '../ships/ships.service';
 
 @Injectable()
@@ -23,9 +22,10 @@ export default class MothershipsService {
       JSON.stringify(await this.mothershipRepository.save(mothership)),
     );
 
+    const { name, id } = savedMotherShip;
     const shipDto = {
-      name: savedMotherShip.name,
-      mothershipId: savedMotherShip.id,
+      name,
+      mothershipId: id,
       quantity: 3,
     };
 
@@ -55,10 +55,6 @@ export default class MothershipsService {
       relations: { ships: true },
     });
     return Util.formatJSONResponse('Mothership was found.', 200, mothership, 'mothership');
-  }
-
-  update(id: number, updateMothershipDto: UpdateMothershipDto) {
-    return `This action updates a #${id} mothership`;
   }
 
   async remove(id: string) {

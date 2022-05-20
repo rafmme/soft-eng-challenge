@@ -7,7 +7,6 @@ import Util from 'src/helpers';
 import ResourceValidator from 'src/helpers/validator';
 import CreateMemberDto from 'src/dto/members/create-member.dto';
 import CreateShipDto from '../../dto/ships/create-ship.dto';
-import UpdateShipDto from '../../dto/ships/update-ship.dto';
 import MembersService from '../members/members.service';
 
 @Injectable()
@@ -20,24 +19,26 @@ export default class ShipsService {
 
   async create(createShipDto: CreateShipDto) {
     const ships = [];
+    const { mothershipId, quantity } = createShipDto;
 
-    await ResourceValidator.isFull(this.shipRepository, createShipDto.mothershipId, 'ms', createShipDto.quantity);
+    await ResourceValidator.isFull(this.shipRepository, mothershipId, 'ms', quantity);
     await ResourceValidator.validateResourceId(createShipDto, this.mothershipRepository, 'Ship');
 
     const mothership = await this.mothershipRepository.findOne({
       where: {
-        id: createShipDto.mothershipId,
+        id: mothershipId,
       },
     });
+    const { name } = mothership;
 
-    for (const element of Util.createArray(createShipDto.quantity)) {
+    for (const {} of Util.createArray(quantity)) {
       const shipData = {
-        mothershipId: createShipDto.mothershipId,
-        quantity: createShipDto.quantity,
+        mothershipId,
+        quantity,
         name: Util.generateResourceName(
           'ship',
-          mothership.name,
-          createShipDto.mothershipId,
+          name,
+          mothershipId,
         ),
       };
 
@@ -48,21 +49,27 @@ export default class ShipsService {
       const newShip = JSON.parse(
         JSON.stringify(await this.shipRepository.save(ship)),
       );
+      const { id, name: shipName } = newShip;
 
-      for (const element of Util.createArray(3)) {
+      for (const {} of Util.createArray(3)) {
         const memberDto: CreateMemberDto = {
-          name: Util.generateResourceName('crew', newShip.name, newShip.id),
-          shipId: newShip.id,
+          name: Util.generateResourceName('crew', shipName, id),
+          shipId: id,
         };
 
         const member = await this.membersService.create(memberDto);
+        const {
+          crewMember: {
+            createdAt, updatedAt,
+            id: memberId, name: memberName,
+          },
+        } = member;
 
         membersList.push({
-          id: member.crewMember.id,
-          name: member.crewMember.name,
-          ship: undefined,
-          createdAt: member.crewMember.createdAt,
-          updatedAt: member.crewMember.updatedAt,
+          createdAt,
+          updatedAt,
+          id: memberId,
+          name: memberName,
         });
 
         newShip.members = membersList;
@@ -90,10 +97,6 @@ export default class ShipsService {
       },
     });
     return Util.formatJSONResponse('Ship was found.', 200, ship, 'ship');
-  }
-
-  update(id: number, updateShipDto: UpdateShipDto) {
-    return `This action updates a #${id} ship`;
   }
 
   async remove(id: string) {

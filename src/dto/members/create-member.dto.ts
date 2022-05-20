@@ -7,7 +7,10 @@ export default class CreateMemberDto {
   @IsNotEmpty()
     name: string;
 
-  @ApiProperty({ example: '07fa9040-dd01-4b38-9c7e-bd7ec10e96ef' })
+  @ApiProperty({
+    example: '07fa9040-dd01-4b38-9c7e-bd7ec10e96ef',
+    description: 'Has to be UUID of a Ship',
+  })
   @IsString()
   @IsNotEmpty()
     shipId: string;
