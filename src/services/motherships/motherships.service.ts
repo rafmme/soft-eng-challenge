@@ -18,9 +18,9 @@ export default class MothershipsService {
   async create(createMothershipDto: CreateMothershipDto) {
     await ResourceValidator.checkIfResourceExist(createMothershipDto, this.mothershipRepository, 'Mothership');
     const mothership: Mothership = this.mothershipRepository.create(createMothershipDto);
-    const savedMotherShip = JSON.parse(
-      JSON.stringify(await this.mothershipRepository.save(mothership)),
-    );
+    const savedMotherShip = JSON.parse(JSON.stringify(
+      await this.mothershipRepository.save(mothership),
+    ));
 
     const { name, id } = savedMotherShip;
     const shipDto = {
@@ -60,6 +60,6 @@ export default class MothershipsService {
   async remove(id: string) {
     await ResourceValidator.validateResourceId({ mothershipId: id }, this.mothershipRepository, 'Ship');
     const mothership = await this.mothershipRepository.delete({ id });
-    return Util.formatJSONResponse('Ship deletion was successful.', 200, mothership, 'mothership');
+    return Util.formatJSONResponse('Mothership deletion was successful.', 200, mothership, 'mothership');
   }
 }

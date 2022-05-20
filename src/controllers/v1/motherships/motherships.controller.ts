@@ -18,7 +18,6 @@ export default class MothershipsController {
   @ApiResponse({
     status: 400,
     description: 'A bad input was submitted',
-
   })
   create(@Body() createMothershipDto: CreateMothershipDto) {
     return this.mothershipsService.create(createMothershipDto);
@@ -60,7 +59,6 @@ export default class MothershipsController {
   @ApiResponse({
     status: 200,
     description: 'A mothership was successfully deleted',
-
   })
   @ApiResponse({
     status: 404,

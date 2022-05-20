@@ -35,20 +35,14 @@ export default class ShipsService {
       const shipData = {
         mothershipId,
         quantity,
-        name: Util.generateResourceName(
-          'ship',
-          name,
-          mothershipId,
-        ),
+        name: Util.generateResourceName('ship', name, mothershipId),
       };
 
       const membersList = [];
       const ship: Ship = this.shipRepository.create(shipData);
       ship.mothership = mothership;
 
-      const newShip = JSON.parse(
-        JSON.stringify(await this.shipRepository.save(ship)),
-      );
+      const newShip = JSON.parse(JSON.stringify(await this.shipRepository.save(ship)));
       const { id, name: shipName } = newShip;
 
       for (const {} of Util.createArray(3)) {
@@ -60,8 +54,7 @@ export default class ShipsService {
         const member = await this.membersService.create(memberDto);
         const {
           crewMember: {
-            createdAt, updatedAt,
-            id: memberId, name: memberName,
+            createdAt, updatedAt, id: memberId, name: memberName,
           },
         } = member;
 

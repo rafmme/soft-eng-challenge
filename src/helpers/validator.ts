@@ -1,5 +1,8 @@
 import {
-  BadRequestException, ConflictException, NotFoundException, UnprocessableEntityException,
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import CreateMemberDto from 'src/dto/members/create-member.dto';
@@ -104,16 +107,14 @@ export default class ResourceValidator {
         id,
       );
 
-      if ((count && (count > (9 - shipCount)))) {
+      if (count && count > 9 - shipCount) {
         throw new UnprocessableEntityException(
-          `Sorry! You can only add ${(9 - shipCount)} more ships to Mothership '${id}'.`,
+          `Sorry! You can only add ${9 - shipCount} more ships to Mothership '${id}'.`,
         );
       }
 
-      if ((count <= 0)) {
-        throw new BadRequestException(
-          `Quantity of ships to be added can't be ${count}`,
-        );
+      if (count <= 0) {
+        throw new BadRequestException(`Quantity of ships to be added can't be ${count}`);
       }
 
       if (shipCount >= 9) {

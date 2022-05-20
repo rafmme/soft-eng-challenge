@@ -1,6 +1,3 @@
-import Member from 'src/entities/members/member.entity';
-import Ship from 'src/entities/ships/ship.entity';
-
 export default class Util {
   /**
    * @description A function that generates a UUID string
@@ -41,11 +38,13 @@ export default class Util {
    * @param {string} param - id (UUID) to use
    * @returns {number} number of ships
    */
-  static shipCount(list: Ship[], param: string): number {
+  static shipCount(list, param: string): number {
     let shipCount = 0;
 
     list.forEach((ship) => {
-      const { mothership: { id } } = ship;
+      const {
+        mothership: { id },
+      } = ship;
       if (id === param) {
         shipCount += 1;
       }
@@ -60,11 +59,13 @@ export default class Util {
    * @param {string} param - id (UUID) to use
    * @returns {number} number of crew members
    */
-  static crewCount(list: Member[], param: string): number {
+  static crewCount(list, param: string): number {
     let crewCount = 0;
 
     list.forEach((member) => {
-      const { ship: { id } } = member;
+      const {
+        ship: { id },
+      } = member;
       if (id === param) {
         crewCount += 1;
       }
@@ -81,11 +82,14 @@ export default class Util {
    * @returns {string} random unique generated name
    */
   static generateResourceName(
-    type:string,
+    type: string,
     parentResourceName: string,
     parentResourceId: string,
   ): string {
-    const resourceName = `${parentResourceName.slice(0, 4)}-${parentResourceId.slice(0, 8)}-${type}-${Util.generateUUID().slice(0, 8)}`;
+    const resourceName = `${parentResourceName.slice(0, 4)}-${parentResourceId.slice(
+      0,
+      8,
+    )}-${type}-${Util.generateUUID().slice(0, 8)}`;
     return resourceName.replace(' ', '').toUpperCase();
   }
 
@@ -95,7 +99,7 @@ export default class Util {
    * @returns {number[]} random unique generated name
    */
   static createArray(length: number): number[] {
-    const dummyArray = new Array(length).fill((0));
+    const dummyArray = new Array(length).fill(0);
     return dummyArray;
   }
 }

@@ -47,11 +47,7 @@ export default class MembersService {
   }
 
   async update(name: string, updateMemberDto: UpdateMemberDto) {
-    const {
-      name: memberName,
-      from_ship: fromShip,
-      to_ship: toShip,
-    } = updateMemberDto;
+    const { name: memberName, from_ship: fromShip, to_ship: toShip } = updateMemberDto;
     const crewMember = await this.memberRepository.findAndCount({
       where: {
         name,

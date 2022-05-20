@@ -19,7 +19,6 @@ export default class MembersController {
   @ApiResponse({
     status: 400,
     description: 'A bad input was submitted',
-
   })
   @ApiResponse({
     status: 404,
@@ -69,7 +68,6 @@ export default class MembersController {
   @ApiResponse({
     status: 400,
     description: 'A bad input was submitted',
-
   })
   @ApiResponse({
     status: 404,

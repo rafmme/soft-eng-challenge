@@ -14,12 +14,10 @@ export default class ShipsController {
   @ApiResponse({
     status: 201,
     description: 'A new ship was created successfully',
-
   })
   @ApiResponse({
     status: 400,
     description: 'A bad input was submitted',
-
   })
   create(@Body() createShipDto: CreateShipDto) {
     return this.shipsService.create(createShipDto);
