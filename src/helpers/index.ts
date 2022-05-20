@@ -46,4 +46,18 @@ export default class Util {
 
     return crewCount;
   }
+
+  static generateResourceName(
+    type:string,
+    parentResourceName: string,
+    parentResourceId: string,
+  ) {
+    const resourceName = `${parentResourceName.slice(0, 4)}-${parentResourceId.slice(0, 8)}-${type}-${this.generateUUID().slice(0, 8)}`;
+    return resourceName.replace(' ', '').toUpperCase();
+  }
+
+  static createArray(length: number): number[] {
+    const dummyArray = new Array(length).fill((0));
+    return dummyArray;
+  }
 }

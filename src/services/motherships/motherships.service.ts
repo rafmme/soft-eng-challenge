@@ -6,19 +6,33 @@ import Util from 'src/helpers';
 import ResourceValidator from 'src/helpers/validator';
 import CreateMothershipDto from '../../dto/motherships/create-mothership.dto';
 import UpdateMothershipDto from '../../dto/motherships/update-mothership.dto';
+import ShipsService from '../ships/ships.service';
 
 @Injectable()
 export default class MothershipsService {
   constructor(
     @InjectRepository(Mothership)
     private readonly mothershipRepository: Repository<Mothership>,
+    private shipsService: ShipsService,
   ) {}
 
   async create(createMothershipDto: CreateMothershipDto) {
-    const mothership: Mothership = this.mothershipRepository.create(createMothershipDto);
     await ResourceValidator.checkIfResourceExist(createMothershipDto, this.mothershipRepository, 'Mothership');
-    const motherShip = await this.mothershipRepository.save(mothership);
-    return Util.formatJSONResponse('New Mothership created!', 201, motherShip, 'mothership');
+    const mothership: Mothership = this.mothershipRepository.create(createMothershipDto);
+    const savedMotherShip = JSON.parse(
+      JSON.stringify(await this.mothershipRepository.save(mothership)),
+    );
+
+    const shipDto = {
+      name: savedMotherShip.name,
+      mothershipId: savedMotherShip.id,
+      quantity: 3,
+    };
+
+    const ship = await this.shipsService.create(shipDto);
+    savedMotherShip.ships = ship.ships;
+
+    return Util.formatJSONResponse('New Mothership created!', 201, savedMotherShip, 'mothership');
   }
 
   async findAll() {

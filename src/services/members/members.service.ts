@@ -16,16 +16,16 @@ export default class MembersService {
   ) {}
 
   async create(createMemberDto: CreateMemberDto) {
+    await ResourceValidator.isFull(this.memberRepository, createMemberDto.shipId, 'sh');
+    await ResourceValidator.validateResourceId(createMemberDto, this.shipRepository, 'Crew');
+    await ResourceValidator.checkIfResourceExist(createMemberDto, this.memberRepository, 'Crew Member');
+
     const crew: Member = this.memberRepository.create(createMemberDto);
     crew.ship = await this.shipRepository.findOne({
       where: {
         id: createMemberDto.shipId,
       },
     });
-
-    await ResourceValidator.isFull(this.memberRepository, createMemberDto.shipId, 'sh');
-    await ResourceValidator.validateResourceId(createMemberDto, this.shipRepository, 'Crew');
-    await ResourceValidator.checkIfResourceExist(createMemberDto, this.memberRepository, 'Crew Member');
 
     const crewMember = await this.memberRepository.save(crew);
     return Util.formatJSONResponse('New Crew Member added!', 201, crewMember, 'crewMember');

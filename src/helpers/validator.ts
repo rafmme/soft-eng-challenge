@@ -1,4 +1,6 @@
-import { ConflictException, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import {
+  BadRequestException, ConflictException, NotFoundException, UnprocessableEntityException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import CreateMemberDto from 'src/dto/members/create-member.dto';
 import CreateMothershipDto from 'src/dto/motherships/create-mothership.dto';
@@ -10,7 +12,7 @@ import Util from '.';
 
 export default class ResourceValidator {
   static async checkIfResourceExist(
-    resource: CreateMothershipDto | CreateShipDto | CreateMemberDto,
+    resource: CreateMothershipDto | CreateMemberDto,
     repository: Repository<Ship> | Repository<Mothership> | Repository<Member>,
     resourceType: string,
   ) {
@@ -73,7 +75,7 @@ export default class ResourceValidator {
     }
   }
 
-  static async isFull(repository, id: string, type: string) {
+  static async isFull(repository, id: string, type: string, count?: number) {
     if (type === 'ms') {
       const shipCount = Util.shipCount(
         await repository.find({
@@ -81,6 +83,18 @@ export default class ResourceValidator {
         }),
         id,
       );
+
+      if ((count && (count > (9 - shipCount)))) {
+        throw new UnprocessableEntityException(
+          `Sorry! You can only add ${(9 - shipCount)} more ships to Mothership '${id}'.`,
+        );
+      }
+
+      if ((count <= 0)) {
+        throw new BadRequestException(
+          `Quantity of ships to be added can't be ${count}`,
+        );
+      }
 
       if (shipCount >= 9) {
         throw new UnprocessableEntityException(
